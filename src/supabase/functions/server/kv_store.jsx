@@ -13,12 +13,12 @@ CREATE TABLE kv_store_3613a76e (
 import { createClient } from "jsr:@supabase/supabase-js@2.49.8";
 
 const client = () => createClient(
-  Deno.env.get("SUPABASE_URL"),
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"),
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY,
 );
 
 // Set stores a key-value pair in the database.
-export const set = async (key: string, value: any): Promise<void> => {
+export const set = async (key, value) => {
   const supabase = client()
   const { error } = await supabase.from("kv_store_3613a76e").upsert({
     key,
@@ -30,7 +30,7 @@ export const set = async (key: string, value: any): Promise<void> => {
 };
 
 // Get retrieves a key-value pair from the database.
-export const get = async (key: string): Promise<any> => {
+export const get = async (key) => {
   const supabase = client()
   const { data, error } = await supabase.from("kv_store_3613a76e").select("value").eq("key", key).maybeSingle();
   if (error) {
@@ -40,7 +40,7 @@ export const get = async (key: string): Promise<any> => {
 };
 
 // Delete deletes a key-value pair from the database.
-export const del = async (key: string): Promise<void> => {
+export const del = async (key) => {
   const supabase = client()
   const { error } = await supabase.from("kv_store_3613a76e").delete().eq("key", key);
   if (error) {
@@ -49,7 +49,7 @@ export const del = async (key: string): Promise<void> => {
 };
 
 // Sets multiple key-value pairs in the database.
-export const mset = async (keys: string[], values: any[]): Promise<void> => {
+export const mset = async (keys, values) => {
   const supabase = client()
   const { error } = await supabase.from("kv_store_3613a76e").upsert(keys.map((k, i) => ({ key: k, value: values[i] })));
   if (error) {
@@ -58,7 +58,7 @@ export const mset = async (keys: string[], values: any[]): Promise<void> => {
 };
 
 // Gets multiple key-value pairs from the database.
-export const mget = async (keys: string[]): Promise<any[]> => {
+export const mget = async (keys) => {
   const supabase = client()
   const { data, error } = await supabase.from("kv_store_3613a76e").select("value").in("key", keys);
   if (error) {
@@ -68,7 +68,7 @@ export const mget = async (keys: string[]): Promise<any[]> => {
 };
 
 // Deletes multiple key-value pairs from the database.
-export const mdel = async (keys: string[]): Promise<void> => {
+export const mdel = async (keys) => {
   const supabase = client()
   const { error } = await supabase.from("kv_store_3613a76e").delete().in("key", keys);
   if (error) {
@@ -77,7 +77,7 @@ export const mdel = async (keys: string[]): Promise<void> => {
 };
 
 // Search for key-value pairs by prefix.
-export const getByPrefix = async (prefix: string): Promise<any[]> => {
+export const getByPrefix = async (prefix) => {
   const supabase = client()
   const { data, error } = await supabase.from("kv_store_3613a76e").select("key, value").like("key", prefix + "%");
   if (error) {

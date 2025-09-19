@@ -1,8 +1,8 @@
-import { Hono } from "npm:hono";
-import { cors } from "npm:hono/cors";
-import { logger } from "npm:hono/logger";
-import * as kv from "./kv_store.tsx";
-import { createClient } from "npm:@supabase/supabase-js";
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import { logger } from "hono/logger";
+import * as kv from "./kv_store.js";
+import { createClient } from "@supabase/supabase-js";
 
 const app = new Hono();
 
@@ -22,12 +22,12 @@ app.use(
 );
 
 // Helper function to generate random 10-digit student ID
-function generateStudentId(): string {
+function generateStudentId() {
   return Math.floor(1000000000 + Math.random() * 9000000000).toString();
 }
 
 // Helper function to authenticate user
-async function authenticateUser(c: any) {
+async function authenticateUser(c) {
   const authHeader = c.req.header('Authorization');
   if (!authHeader) {
     return null;
@@ -50,8 +50,8 @@ async function authenticateUser(c: any) {
   // For other tokens, try to validate with Supabase
   try {
     const supabase = createClient(
-      Deno.env.get('SUPABASE_URL'),
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'),
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY,
     );
     
     const { data: { user }, error } = await supabase.auth.getUser(token);
@@ -132,8 +132,8 @@ app.post("/make-server-3613a76e/signup", async (c) => {
     const { email, password, name, role } = await c.req.json();
     
     const supabase = createClient(
-      Deno.env.get('SUPABASE_URL'),
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'),
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY,
     );
     
     const { data, error } = await supabase.auth.admin.createUser({
@@ -271,8 +271,8 @@ app.post("/make-server-3613a76e/add-student", async (c) => {
     const studentId = generateStudentId();
     
     const supabase = createClient(
-      Deno.env.get('SUPABASE_URL'),
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'),
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY,
     );
     
     const { data, error } = await supabase.auth.admin.createUser({
@@ -559,8 +559,8 @@ app.post("/make-server-3613a76e/add-teacher", async (c) => {
     const { name, email, password } = await c.req.json();
     
     const supabase = createClient(
-      Deno.env.get('SUPABASE_URL'),
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'),
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY,
     );
     
     const { data, error } = await supabase.auth.admin.createUser({
@@ -592,4 +592,4 @@ app.post("/make-server-3613a76e/add-teacher", async (c) => {
   }
 });
 
-Deno.serve(app.fetch);
+export default app;
